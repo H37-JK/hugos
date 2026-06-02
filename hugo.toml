@@ -1,4 +1,6 @@
-baseURL = 'https://example.org/'
-locale = 'en-us'
-title = 'My New Hugo Project'
+baseURL = 'https://homecares/'
+locale = 'ko'
+title = 'homecare'
 theme = "ananke"
+canonifyURLs = true
+relativeURLs = true

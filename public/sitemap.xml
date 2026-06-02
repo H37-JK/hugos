@@ -3,10 +3,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://example.org/categories/</loc>
+    <loc>https://homecares/categories/</loc>
   </url><url>
-    <loc>https://example.org/tags/</loc>
+    <loc>https://homecares/</loc>
   </url><url>
-    <loc>https://example.org/</loc>
+    <loc>https://homecares/tags/</loc>
+  </url><url>
+    <loc>https://homecares/1/</loc>
+  </url><url>
+    <loc>https://homecares/2/</loc>
   </url>
 </urlset>
