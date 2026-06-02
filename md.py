@@ -19,7 +19,6 @@ def create_region_pages():
         region_name = region['name']
         service_name = region['service']
 
-
         lines = [
             "---",
             f'title: "{region_name} {service_name}"',

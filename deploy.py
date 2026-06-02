@@ -2,8 +2,11 @@ import os
 import shutil
 import subprocess
 import requests
+from dotenv import load_dotenv
 
-NETLIFY_TOKEN = "nfp_Z6ZspmYpWf4rJTuWXweuRXuEWtmUgGGdfb56"
+load_dotenv()
+
+NETLIFY_TOKEN = os.getenv("NETLIFY_TOKEN")
 headers = {"Authorization": f"Bearer {NETLIFY_TOKEN}"}
 
 sites = [
