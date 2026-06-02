@@ -27,7 +27,12 @@ def prepare_content():
     for i, region in enumerate(regions, start=1):
         region_name = region['name']
         with open(f"content/{i}.md", "w", encoding="utf-8") as f:
-            f.write(f'---\ntitle: "{region_name} 작업사례 {i}"\nregion: "{region_name} {i}번"\n---\n# {i}번 사례\n{{{{< contact >}}}}')
+            f.write(f''f'---\n'
+                    f'title: "{region_name} 작업사례 {i}"\n'
+                    f'region: "{region_name} {i}번"\n'
+                    f'---\n'
+                    f'# {i}번 사례\n'
+                    f'{{{{<'f'contact >}}}}')
 
 
 def deploy_all():
