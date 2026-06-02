@@ -28,6 +28,7 @@ def prepare_content():
         region_name = region['name']
         with open(f"content/{i}.md", "w", encoding="utf-8") as f:
             f.write(f''f'---\n'
+                    f'title: "{region_name} 작업"\n'
                     f'---\n'
                     f'{{{{<'f'contact >}}}}')
 
