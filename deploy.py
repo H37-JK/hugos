@@ -5,62 +5,66 @@ import requests
 from dotenv import load_dotenv
 
 load_dotenv()
-
 NETLIFY_TOKEN = os.getenv("NETLIFY_TOKEN")
 headers = {"Authorization": f"Bearer {NETLIFY_TOKEN}"}
 
 sites = [
-    {"site_name": "ohang-home", "region_file": "daehwa.md", "title": "서울 전지역 누수탐지"},
-    {"site_name": "ohang-homs", "region_file": "juyeop.md", "title": "서울 전지역 누수탐지"},
+    {"name": "ohang-home-1"},
+    {"name": "ohang-home-2"},
+]
+
+regions = [
+    {"name": "대화동"},
+    {"name": "마두동"},
 ]
 
 
-def deploy_matched_sites():
-    for item in sites:
-        site_name = item['site_name']
-        region_file = item['region_file']
-        page_title = item['title']
+def prepare_content():
+    if os.path.exists("content"):
+        shutil.rmtree("content")
+    os.makedirs("content")
 
-        print(f"--- {site_name} (지역: {region_file}) 작업 시작 ---")
+    for i, region in enumerate(regions, start=1):
+        region_name = region['name']
+        with open(f"content/{i}.md", "w", encoding="utf-8") as f:
+            f.write(f'---\ntitle: "{region_name} 작업사례 {i}"\nregion: "{region_name} {i}번"\n---\n# {i}번 사례\n{{{{< contact >}}}}')
 
-        if os.path.exists("content"):
-            shutil.rmtree("content")
-        os.makedirs("content")
 
-        source_file = f"regions_data/{region_file}"
-        shutil.copy(source_file, "content/_index.md")
+def deploy_all():
+    for site in sites:
+        site_name = site['name']
+        site_url = f"https://{site_name}.netlify.app/"
+
+        print(f"\n--- 🚀 [{site_name}] 배포 프로세스 시작 ---")
+
+        prepare_content()
+
+        print(f"🔨 빌드 중: {site_url}")
+        result = subprocess.run(
+            ["hugo", "--cleanDestinationDir", "-b", site_url],
+            capture_output=True, text=True, encoding="utf-8"
+        )
+        
+        if result.returncode != 0:
+            print(f"❌ 빌드 에러 ({site_name}):\n{result.stderr}")
+            continue
 
         res = requests.post("https://api.netlify.com/api/v1/sites", headers=headers, json={"name": site_name})
 
-        if res.status_code == 201:
+        if res.status_code == 200:
             site_id = res.json()['id']
         else:
             res_list = requests.get("https://api.netlify.com/api/v1/sites", headers=headers)
+            print(res_list)
             site_id = next(s['id'] for s in res_list.json() if s['name'] == site_name)
 
-        print(f"Building site for {page_title}...")
-
-        current_env = os.environ.copy()
-        current_env["HUGO_TITLE"] = page_title
-
-        result = subprocess.run(
-            ["hugo", "--cleanDestinationDir"],
-            env=current_env,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-        )
-
-        if result.returncode != 0:
-            print("❌ Hugo 빌드 에러:")
-            print(result.stderr)
-            continue
-
-        print(site_id)
-
-        subprocess.run(["netlify", "deploy", "--prod", "--dir", "public", "--site", site_id], check=True, shell=True)
-        print(f"✅ {site_name} 배포 완료!\n")
+        print(f"📦 Netlify 배포 중...")
+        try:
+            subprocess.run(["netlify", "deploy", "--prod", "--dir", "public", "--site", site_id], check=True, shell=True)
+            print(f"✅ {site_name} 배포 완료!")
+        except subprocess.CalledProcessError:
+            print(f"❌ {site_name} 배포 실패. (Netlify 사이트 이름이 정확한지 확인하세요)")
 
 
 if __name__ == "__main__":
-    deploy_matched_sites()
+    deploy_all()

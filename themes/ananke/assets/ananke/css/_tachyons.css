@@ -3279,7 +3279,7 @@ code, .code { font-family: Consolas, monaco, monospace; }
  .no-underline-l { text-decoration: none; }
  .tl-l { text-align: left; }
  .tr-l { text-align: right; }
- .tc-l { text-align: center; }
+ /*.tc-l { text-align: center; }*/
  .tj-l { text-align: justify; }
  .ttc-l { text-transform: capitalize; }
  .ttl-l { text-transform: lowercase; }
