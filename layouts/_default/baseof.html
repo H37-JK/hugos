@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white mx-auto">
+<header class="bg-white p-4 pl-0 max-w-3xl mx-auto">
+    <div class="text-xl font-bold">{{ .Params.region }} {{ .Params.category }} 전문 업체</div>
+</header>
+
+<main>
+    {{ block "main" . }}{{ end }}
+</main>
+
+<footer class="p-8 text-center text-gray-500 text-sm">
+    © 2026 홈케어 | 본 사이트는 {{ .Params.region }} {{ .Params.category }} 전문 업체 안내 페이지입니다.
+</footer>
+</body>
+
+<script type="application/ld+json">
+    {
+        "@type": "LocalBusiness",
+        "name": "{{ .Params.region }} {{ .Params.category }} 전문",
+        "description": "{{ .Params.region }} 지역 24시 출동 수리 서비스",
+        "areaServed": "{{ .Params.region }}"
+    }
+</script>
+
+</html>
