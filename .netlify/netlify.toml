@@ -7,7 +7,7 @@ redirects = []
 [functions."*"]
 
 [build]
-publish = "C:\\Users\\user\\IdeaProjects\\hugo\\public"
+publish = "C:\\Users\\these\\IdeaProjects\\hugos\\public"
 publishOrigin = "ui"
 commandOrigin = "ui"
 command = "hugo"

@@ -43,11 +43,11 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="flex justify-between items-center p-5 bg-gray-50 rounded-xl border border-gray-100 hover:border-blue-300 transition shadow-sm">
                                         <div>
-                                                <span class="text-gray-800 font-bold block text-lg">단순 변기/싱크대 통수</span>
+                                                <span class="text-gray-800 font-bold block text-lg">변기 막힘/교체</span>
                                                 <span class="text-gray-400 text-xs">장비 미사용, 단순 이물질 제거</span>
                                         </div>
                                         <div class="text-right">
-                                                <span class="text-blue-600 font-black text-xl">40,000원~</span>
+                                                <span class="text-blue-600 font-black text-xl">60,000원~</span>
                                         </div>
                                 </div>
 
@@ -57,13 +57,13 @@
                                                 <span class="text-gray-400 text-xs">딱딱한 이물질 및 대량 오물 제거</span>
                                         </div>
                                         <div class="text-right">
-                                                <span class="text-blue-600 font-black text-xl">60,000원~</span>
+                                                <span class="text-blue-600 font-black text-xl">100,000원~</span>
                                         </div>
                                 </div>
 
                                 <div class="flex justify-between items-center p-5 bg-gray-50 rounded-xl border border-blue-200 hover:border-blue-400 transition shadow-sm">
                                         <div>
-                                                <span class="text-gray-800 font-bold block text-lg">배관 내시경 정밀 검사</span>
+                                                <span class="text-gray-800 font-bold block text-lg">수전 교체/싱크대 막힘</span>
                                                 <span class="text-gray-500 text-xs">고화질 카메라 원인 분석</span>
                                         </div>
                                         <div class="text-right">
@@ -196,7 +196,7 @@
         {{ partial "contact.html" . }}
 
         <div class="fixed bottom-24 right-6 z-50">
-                <a href="tel:{{ .Params.phone }}" class="relative flex items-center justify-center w-16 h-16 bg-blue-600 text-white rounded-full shadow-2xl hover:bg-blue-700 transition-colors group">
+                <a href="tel:050713266763" class="relative flex items-center justify-center w-16 h-16 bg-blue-600 text-white rounded-full shadow-2xl hover:bg-blue-700 transition-colors group">
                         <span class="absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75 animate-ping"></span>
 
                         <svg xmlns="http://www.w3.org/2000/svg" class="relative h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -259,7 +259,7 @@
 
         <div class="flex justify-center items-center gap-1 my-10 overflow-x-auto py-2">
                 {{ $currentID := int .Params.id }}
-                {{ $maxPages := 500 }}
+                {{ $maxPages := 3000 }}
 
                 {{ if eq $currentID 0 }}{{ $currentID = 1 }}{{ end }}
 
