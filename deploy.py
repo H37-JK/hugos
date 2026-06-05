@@ -20,6 +20,61 @@ area_data = {
     "인천광역시": ["강화군", "계양구", "미추홀구", "남동구", "동구", "부평구", "서구", "연수구", "옹진군", "중구"],
 }
 
+
+import random
+
+def generate_random_body(region, category):
+    # 1. 인사말 및 도입부 (여러 버전)
+    intros = [
+        f"안녕하세요! {region} 지역에서 {category} 문제를 가장 신속하게 해결해 드리는 베테랑 팀입니다.",
+        f"{region} 주민 여러분, 갑작스러운 {category} 때문에 당황하셨나요? 저희가 즉시 달려갑니다.",
+        f"믿을 수 있는 {region} 전담 {category} 수리 업체입니다. 365일 24시간 대기 중입니다."
+    ]
+
+    # 2. 서비스 특징 (여러 버전)
+    features = [
+        f"저희는 최신형 고화질 배관 내시경을 투입하여 {region} 현장의 원인을 정확히 파악합니다.",
+        f"단순히 뚫는 것에 그치지 않고, 강력한 고압 세척 장비로 배관 내부 스케일링까지 완벽하게 진행합니다.",
+        f"특수 석션 장비를 활용해 이물질을 근본적으로 제거하여 재발 가능성을 최소화하고 있습니다."
+    ]
+
+    # 3. 지역 관련 멘트 (랜드마크 등과 결합하면 베스트)
+    local_mentions = [
+        f"{region} 인근 아파트 단지는 물론 상가, 빌라 어디든 15분 내외로 도착이 가능합니다.",
+        f"이미 {region} 내 많은 고객님들께서 저희의 꼼꼼한 시공 서비스에 만족하고 계십니다.",
+        f"지역 특성을 잘 아는 {region} 전담 기사가 배정되어 거품 없는 투명한 견적을 약속드립니다."
+    ]
+
+    # 4. 마무리 및 호출
+    closings = [
+        f"지금 바로 전화주시면 {region} 전문 상담원이 친절하게 안내해 드리겠습니다.",
+        f"어려운 배관 문제, 더 이상 혼자 고민하지 마시고 전문가에게 맡겨주세요.",
+        f"합리적인 비용과 확실한 A/S로 {region} 고객님의 만족을 책임지겠습니다."
+    ]
+
+    # 각 리스트에서 하나씩 무작위 선택
+    body = [
+        random.choice(intros),
+        random.choice(features),
+        random.choice(local_mentions),
+        random.choice(closings)
+    ]
+
+    # [중요] 섹션의 순서까지 섞어주면 중복 판정 확률이 더 낮아집니다.
+    # random.shuffle(body)
+
+    return "\n\n".join(body)
+
+
+def generate_random_title(region, category):
+    prefixes = ["", "24시 출동!", "[추천]", "빠른 해결", "전문 업체"]
+    suffixes = ["가장 잘하는 곳", "비용 안내", "현장 후기", "10곳 비교", "전문가 리스트"]
+
+    pre = random.choice(prefixes)
+    suf = random.choice(suffixes)
+
+    return f"{pre} {region} {category} {suf}".strip()
+
 now = datetime.now()
 today_str = now.strftime("%Y-%m-%dT%H:%M:%S+09:00") # 한국 시간대(+09:00) 포함
 
@@ -54,9 +109,13 @@ with open('dong.txt.new', 'r', encoding='utf-8') as f:
 
 
 categories = [
-    {"category": "변기막힘 작업"},
-    {"category": "세면대 작업"},
-    {"category": "수전 교체 작업"},
+    {"category": "변기"},
+    {"category": "세면대"},
+    {"category": "수전"},
+]
+
+dos = [
+    '막힘', '교체', '수리', '고장', '해결', '뚫음'
 ]
 
 def clean_xml_file(file_path):
@@ -87,10 +146,10 @@ def prepare_content(num):
 
     with open("content/_index.md", "w", encoding="utf-8") as f:
         region = '서울 특별시'
-        category = '변기 막힘 작업'
+        category = categories[num - 1]['category'] + random.choice(dos)
 
         f.write(f''f'---\n'
-                f'title: "{region}"\n'
+                f'title: "{region} {category} 업체 가장 잘하는 곳"\n'
                 f'region: "{region}"\n'
                 f'category: "{category}"\n'
                 f'date: {today_str}\n'
@@ -98,16 +157,18 @@ def prepare_content(num):
                 f'---\n')
 
     for i, region in enumerate(regions, start=1):
-        category = categories[num - 1]['category']
+        category = categories[num - 1]['category'] + random.choice(dos)
+        unique_title = generate_random_title(region, category)
+        unique_body = generate_random_body(region, category)
         with open(f"content/{i}.md", "w", encoding="utf-8") as f:
             f.write(f''f'---\n'
-                    f'title: "{region}"\n'
+                    f'title: "{unique_title}"\n'
                     f'region: "{region}"\n'
                     f'category: "{category}"\n'
                     f'date: {today_str}\n'
                     f'id: "{i}"\n'
-                    f'---\n')
-
+                    f'unique_body: "{unique_body}"\n'
+                    f'---\n') # 랜덤 생성된 본문 주입
 
 def deploy_all():
     for i, site in enumerate(sites, start=1):
@@ -133,23 +194,23 @@ def deploy_all():
         clean_xml_file(sitemap_path)
         clean_xml_file(f"{output_dir}/index.xml")
 
-        # res = requests.post("https://api.netlify.com/api/v1/sites", headers=headers, json={"name": site_name})
-        #
-        # if res.status_code == 200:
-        #     site_id = res.json()['id']
-        # else:
-        #     res_list = requests.get("https://api.netlify.com/api/v1/sites", headers=headers)
-        #     site_id = next(s['id'] for s in res_list.json() if s['name'] == site_name)
-        #
-        # print(f"📦 Netlify 배포 중...")
-        # try:
-        #     subprocess.run(
-        #         ["netlify", "deploy", "--prod", "--dir", output_dir, "--site", site_id],
-        #         shell=True, check=True
-        #     )
-        #     print(f"✅ {site_name} 배포 완료!")
-        # except subprocess.CalledProcessError:
-        #     print(f"❌ {site_name} 배포 실패. (Netlify 사이트 이름이 정확한지 확인하세요.)")
+        res = requests.post("https://api.netlify.com/api/v1/sites", headers=headers, json={"name": site_name})
+
+        if res.status_code == 200:
+            site_id = res.json()['id']
+        else:
+            res_list = requests.get("https://api.netlify.com/api/v1/sites", headers=headers)
+            site_id = next(s['id'] for s in res_list.json() if s['name'] == site_name)
+
+        print(f"📦 Netlify 배포 중...")
+        try:
+            subprocess.run(
+                ["netlify", "deploy", "--prod", "--dir", output_dir, "--site", site_id],
+                shell=True, check=True
+            )
+            print(f"✅ {site_name} 배포 완료!")
+        except subprocess.CalledProcessError:
+            print(f"❌ {site_name} 배포 실패. (Netlify 사이트 이름이 정확한지 확인하세요.)")
 
 
 if __name__ == "__main__":
