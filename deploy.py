@@ -85,6 +85,18 @@ def prepare_content(num):
         shutil.rmtree("content")
     os.makedirs("content")
 
+    with open("content/_index.md", "w", encoding="utf-8") as f:
+        region = '서울 특별시'
+        category = '변기 막힘 작업'
+
+        f.write(f''f'---\n'
+                f'title: "{region}"\n'
+                f'region: "{region}"\n'
+                f'category: "{category}"\n'
+                f'date: {today_str}\n'
+                f'id: "0"\n'
+                f'---\n')
+
     for i, region in enumerate(regions, start=1):
         category = categories[num - 1]['category']
         with open(f"content/{i}.md", "w", encoding="utf-8") as f:
