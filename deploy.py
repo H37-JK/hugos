@@ -115,7 +115,7 @@ categories = [
 ]
 
 dos = [
-    '막힘', '교체', '수리', '고장', '해결', '뚫음'
+    '막힘', '교체', '수리', '고장'
 ]
 
 def clean_xml_file(file_path):
@@ -156,19 +156,22 @@ def prepare_content(num):
                 f'id: "0"\n'
                 f'---\n')
 
-    for i, region in enumerate(regions, start=1):
-        category = categories[num - 1]['category'] + random.choice(dos)
-        unique_title = generate_random_title(region, category)
-        unique_body = generate_random_body(region, category)
-        with open(f"content/{i}.md", "w", encoding="utf-8") as f:
-            f.write(f''f'---\n'
-                    f'title: "{unique_title}"\n'
-                    f'region: "{region}"\n'
-                    f'category: "{category}"\n'
-                    f'date: {today_str}\n'
-                    f'id: "{i}"\n'
-                    f'unique_body: "{unique_body}"\n'
-                    f'---\n') # 랜덤 생성된 본문 주입
+    counter = 1
+    for region in regions:
+        for action in dos:
+            category = categories[num - 1]['category'] + action
+            unique_title = generate_random_title(region, category)
+            unique_body = generate_random_body(region, category)
+            with open(f"content/{counter}.md", "w", encoding="utf-8") as f:
+                f.write(f''f'---\n'
+                        f'title: "{unique_title}"\n'
+                        f'region: "{region}"\n'
+                        f'category: "{category}"\n'
+                        f'date: {today_str}\n'
+                        f'id: "{counter}"\n'
+                        f'unique_body: "{unique_body}"\n'
+                        f'---\n') # 랜덤 생성된 본문 주입
+            counter += 1
 
 def deploy_all():
     for i, site in enumerate(sites, start=1):
