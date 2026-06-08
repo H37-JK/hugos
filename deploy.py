@@ -11,8 +11,8 @@ headers = {"Authorization": f"Bearer {NETLIFY_TOKEN}"}
 
 sites = [
     {"name": "homecarees-ssulbis"},
-    # {"name": "recarees-semuns"},
-    # {"name": "fullcarees-sujuns"},
+    {"name": "recarees-semuns"},
+    {"name": "fullcarees-sujuns"},
 ]
 area_data = {
     "서울특별시": ["강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"],
@@ -218,24 +218,24 @@ def deploy_all():
         clean_xml_file(sitemap_path)
         clean_xml_file(f"{output_dir}/index.xml")
 
-        # res = requests.post("https://api.netlify.com/api/v1/sites", headers=headers, json={"name": site_name})
-        #
-        # if res.status_code == 200:
-        #     site_id = res.json()['id']
-        # else:
-        #     res_list = requests.get("https://api.netlify.com/api/v1/sites", headers=headers)
-        #     site_id = next(s['id'] for s in res_list.json() if s['name'] == site_name)
-        #
-        # print(f"📦 Netlify 배포 중...")
-        # try:
-        #     subprocess.run(
-        #         ["netlify", "deploy", "--prod", "--dir", output_dir, "--site", site_id],
-        #         shell=True, check=True
-        #     )
-        #     print(f"✅ {site_name} 배포 완료!")
-        # except subprocess.CalledProcessError:
-        #     print(f"❌ {site_name} 배포 실패. (Netlify 사이트 이름이 정확한지 확인하세요.)")
-        #
+        res = requests.post("https://api.netlify.com/api/v1/sites", headers=headers, json={"name": site_name})
+
+        if res.status_code == 200:
+            site_id = res.json()['id']
+        else:
+            res_list = requests.get("https://api.netlify.com/api/v1/sites", headers=headers)
+            site_id = next(s['id'] for s in res_list.json() if s['name'] == site_name)
+
+        print(f"📦 Netlify 배포 중...")
+        try:
+            subprocess.run(
+                ["netlify", "deploy", "--prod", "--dir", output_dir, "--site", site_id],
+                shell=True, check=True
+            )
+            print(f"✅ {site_name} 배포 완료!")
+        except subprocess.CalledProcessError:
+            print(f"❌ {site_name} 배포 실패. (Netlify 사이트 이름이 정확한지 확인하세요.)")
+
 
 if __name__ == "__main__":
     deploy_all()
