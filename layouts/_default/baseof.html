@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ .Title }}</title>
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ .Permalink }}"> <!-- 중복 문서 방지 핵심! -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ .Title }}">
+    <meta property="og:description" content="{{ .Params.description }}">
+    <meta property="og:url" content="{{ .Permalink }}">
+    <meta property="og:site_name" content="홈케어 지역 서비스">
+    <!-- 아래 image 경로에 실제 이미지 파일 주소를 넣으세요 -->
+    <meta name="thumbnail" content="{{ index .Params.images 0 }}" />
+    <meta property="og:image" content="{{ index .Params.images 0 }}" />
+    <meta property="og:locale" content="ko_KR">
+    <!-- 이 부분을 추가하세요 -->
+    {{ if .Params.description }}
+    <meta name="description" content="{{ .Params.description }}">
+    {{ else }}
+    <meta name="description" content="{{ .Site.Title }} - 전국 최저가 신속 출동 서비스">
+    {{ end }}
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-white mx-auto">
@@ -20,13 +37,38 @@
 </footer>
 </body>
 
+
+{{- /* 1. 이미지 리스트를 절대 경로(https://...)로 변환 */ -}}
+{{- $image_list := slice -}}
+{{- if .Params.images -}}
+{{- range .Params.images -}}
+{{- $image_list = $image_list | append (absURL .) -}}
+{{- end -}}
+{{- else -}}
+{{- /* 이미지가 없을 경우를 대비한 기본 이미지 */ -}}
+{{- $image_list = $image_list | append (absURL "/images/1.jpg") -}}
+{{- end -}}
+
+{{- /* 2. 전체 데이터를 하나의 구조체로 생성 (문법 에러 방지 핵심) */ -}}
+{{- $schema := dict
+"@context" "https://schema.org"
+"@type" "LocalBusiness"
+"name" (printf "%s %s 전문 업체" .Params.region .Params.category)
+"description" .Params.description
+"url" .Permalink
+"telephone" "0507-1326-6763"
+"address" (dict
+"@type" "PostalAddress"
+"addressLocality" .Params.region
+"addressCountry" "KR"
+)
+"priceRange" "₩40,000 - ₩300,000"
+"image" $image_list
+-}}
+
+<!-- 3. 딱 한 번만 출력 (에러 발생 가능성 0%) -->
 <script type="application/ld+json">
-    {
-        "@type": "LocalBusiness",
-        "name": "{{ .Params.region }} {{ .Params.category }} 전문",
-        "description": "{{ .Params.region }} 지역 24시 출동 수리 서비스",
-        "areaServed": "{{ .Params.region }}"
-    }
+    {{ $schema | jsonify | safeJS }}
 </script>
 
 </html>

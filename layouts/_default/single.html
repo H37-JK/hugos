@@ -281,6 +281,23 @@
                 </a>
         </div>
 
+        <div class="grid grid-cols-5 gap-1 mb-8 overflow-hidden rounded-xl shadow-sm">
+                {{ range .Params.images }}
+                <div class="aspect-square">
+                        <img src="{{ . }}" alt="{{ $.Title }} 작업 사진" class="w-full h-full object-cover">
+                </div>
+                {{ end }}
+        </div>
+
+        <div class="mt-20 opacity-30 border-t pt-4 hidden">
+                <p class="text-[10px] text-center text-gray-400 mb-2">PHOTO LOG DATA</p>
+                <div class="flex justify-center gap-1 overflow-hidden h-12">
+                        {{ range .Params.images }}
+                        <img src="{{ . }}" alt="{{ $.Params.region }} 작업 현장 사진" class="w-16 h-12 object-cover grayscale">
+                        {{ end }}
+                </div>
+        </div>
+
         <div class="flex justify-center items-center gap-1 my-10 overflow-x-auto py-2">
                 {{ $currentID := int .Params.id }}
                 {{ $maxPages := 3000 }}

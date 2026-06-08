@@ -67,8 +67,8 @@ def generate_random_body(region, category):
 
 
 def generate_random_title(region, category):
-    prefixes = ["", "24시 출동!", "[추천]", "빠른 해결", "전문 업체"]
-    suffixes = ["가장 잘하는 곳", "비용 안내", "현장 후기", "10곳 비교", "전문가 리스트"]
+    prefixes = ["", "24시 출동!", "", ""]
+    suffixes = ["가장 잘하는 곳", "10곳 비교", "업체 리스트"]
 
     pre = random.choice(prefixes)
     suf = random.choice(suffixes)
@@ -118,6 +118,11 @@ dos = [
     '막힘', '교체', '수리', '고장'
 ]
 
+
+all_images = [f"/images/{i}.png" for i in range(1, 7)] # 1.jpg ~ 20.jpg 가 있다고 가정
+
+
+
 def clean_xml_file(file_path):
     if os.path.exists(file_path):
         try:
@@ -139,20 +144,31 @@ def clean_xml_file(file_path):
             print(f"❌ {file_path} 처리 중 에러: {e}")
 
 
-def prepare_content(num):
+def prepare_content(num, images_str):
     if os.path.exists("content"):
         shutil.rmtree("content")
     os.makedirs("content")
 
+    selected_imgs = random.sample(all_images, 5)
+
+    # 3. 마크다운에 넣기 좋게 문자열로 변환 ["img1", "img2"...]
+    # Hugo에서 인식하기 편하게 대괄호 형태로 만듭니다.
+    img_param = str(selected_imgs).replace("'", '"')
+    print(img_param)
+
     with open("content/_index.md", "w", encoding="utf-8") as f:
         region = '서울 특별시'
         category = categories[num - 1]['category'] + random.choice(dos)
-
+        unique_body = generate_random_body(region, category)
+        summary = f"{category} 전문 업체입니다. 24시 신속 출동 및 정직한 비용으로 해결해 드립니다."
         f.write(f''f'---\n'
                 f'title: "{region} {category} 업체 가장 잘하는 곳"\n'
+                f'description: "{summary}"\n' # 👈 이 줄을 추가하세요!
                 f'region: "{region}"\n'
                 f'category: "{category}"\n'
                 f'date: {today_str}\n'
+                f'unique_body: "{unique_body}"\n'
+                f'images: {images_str}\n' # 👈 이미지 리스트 주입
                 f'id: "0"\n'
                 f'---\n')
 
@@ -160,14 +176,17 @@ def prepare_content(num):
     for region in regions:
         for action in dos:
             category = categories[num - 1]['category'] + action
+            summary = f"{region} {category} 전문 업체입니다. 24시 신속 출동 및 정직한 비용으로 해결해 드립니다."
             unique_title = generate_random_title(region, category)
             unique_body = generate_random_body(region, category)
             with open(f"content/{counter}.md", "w", encoding="utf-8") as f:
                 f.write(f''f'---\n'
                         f'title: "{unique_title}"\n'
+                        f'description: "{summary}"\n' # 👈 이 줄을 추가하세요!
                         f'region: "{region}"\n'
                         f'category: "{category}"\n'
                         f'date: {today_str}\n'
+                        f'images: {images_str}\n' # 👈 이미지 리스트 주입
                         f'id: "{counter}"\n'
                         f'unique_body: "{unique_body}"\n'
                         f'---\n') # 랜덤 생성된 본문 주입
@@ -180,8 +199,10 @@ def deploy_all():
         site_url = f"https://{site_name}.netlify.app"
 
         print(f"\n--- 🚀 [{site_name}] 배포 프로세스 시작 ---")
-
-        prepare_content(i)
+        all_images = [f"{site_url}/images/{i}.png" for i in range(1, 7)]
+        shuffled_images = random.sample(all_images, 5) # 5개를 무작위로 선택
+        images_str = "[" + ",".join([f'"{img}"' for img in shuffled_images]) + "]"
+        prepare_content(i, images_str)
 
         print(f"🔨 빌드 중: {site_url}")
         output_dir = f"public_{site_name}"
