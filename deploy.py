@@ -11,8 +11,8 @@ headers = {"Authorization": f"Bearer {NETLIFY_TOKEN}"}
 
 sites = [
     {"name": "homecarees-ssulbis"},
-    {"name": "recarees-semuns"},
-    {"name": "fullcarees-sujuns"},
+    # {"name": "recarees-semuns"},
+    # {"name": "fullcarees-sujuns"},
 ]
 area_data = {
     "서울특별시": ["강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"],
@@ -67,8 +67,8 @@ def generate_random_body(region, category):
 
 
 def generate_random_title(region, category):
-    prefixes = ["", "24시 출동!", "", ""]
-    suffixes = ["가장 잘하는 곳", "10곳 비교", "업체 리스트"]
+    prefixes = ["", "", ""]
+    suffixes = ["전문 업체", "가장 잘하는 곳", "10곳 비교", "업체 리스트"]
 
     pre = random.choice(prefixes)
     suf = random.choice(suffixes)
@@ -149,10 +149,8 @@ def prepare_content(num, images_str):
         shutil.rmtree("content")
     os.makedirs("content")
 
-    selected_imgs = random.sample(all_images, 5)
+    selected_imgs = random.sample(all_images, 6)
 
-    # 3. 마크다운에 넣기 좋게 문자열로 변환 ["img1", "img2"...]
-    # Hugo에서 인식하기 편하게 대괄호 형태로 만듭니다.
     img_param = str(selected_imgs).replace("'", '"')
     print(img_param)
 
@@ -160,10 +158,10 @@ def prepare_content(num, images_str):
         region = '서울 특별시'
         category = categories[num - 1]['category'] + random.choice(dos)
         unique_body = generate_random_body(region, category)
-        summary = f"{category} 전문 업체입니다. 24시 신속 출동 및 정직한 비용으로 해결해 드립니다."
+        summary = f"{region}{category} 전문 업체입니다. 24시 신속 출동 및 정직한 비용으로 해결해 드립니다."
         f.write(f''f'---\n'
                 f'title: "{region} {category} 업체 가장 잘하는 곳"\n'
-                f'description: "{summary}"\n' # 👈 이 줄을 추가하세요!
+                f'description: "{unique_body}"\n' # 👈 이 줄을 추가하세요!
                 f'region: "{region}"\n'
                 f'category: "{category}"\n'
                 f'date: {today_str}\n'
@@ -179,10 +177,12 @@ def prepare_content(num, images_str):
             summary = f"{region} {category} 전문 업체입니다. 24시 신속 출동 및 정직한 비용으로 해결해 드립니다."
             unique_title = generate_random_title(region, category)
             unique_body = generate_random_body(region, category)
+            selected_imgs = random.sample(all_images, 6)
+            img_param = str(selected_imgs).replace("'", '"')
             with open(f"content/{counter}.md", "w", encoding="utf-8") as f:
                 f.write(f''f'---\n'
                         f'title: "{unique_title}"\n'
-                        f'description: "{summary}"\n' # 👈 이 줄을 추가하세요!
+                        f'description: "{unique_body}"\n' # 👈 이 줄을 추가하세요!
                         f'region: "{region}"\n'
                         f'category: "{category}"\n'
                         f'date: {today_str}\n'
@@ -218,24 +218,24 @@ def deploy_all():
         clean_xml_file(sitemap_path)
         clean_xml_file(f"{output_dir}/index.xml")
 
-        res = requests.post("https://api.netlify.com/api/v1/sites", headers=headers, json={"name": site_name})
-
-        if res.status_code == 200:
-            site_id = res.json()['id']
-        else:
-            res_list = requests.get("https://api.netlify.com/api/v1/sites", headers=headers)
-            site_id = next(s['id'] for s in res_list.json() if s['name'] == site_name)
-
-        print(f"📦 Netlify 배포 중...")
-        try:
-            subprocess.run(
-                ["netlify", "deploy", "--prod", "--dir", output_dir, "--site", site_id],
-                shell=True, check=True
-            )
-            print(f"✅ {site_name} 배포 완료!")
-        except subprocess.CalledProcessError:
-            print(f"❌ {site_name} 배포 실패. (Netlify 사이트 이름이 정확한지 확인하세요.)")
-
+        # res = requests.post("https://api.netlify.com/api/v1/sites", headers=headers, json={"name": site_name})
+        #
+        # if res.status_code == 200:
+        #     site_id = res.json()['id']
+        # else:
+        #     res_list = requests.get("https://api.netlify.com/api/v1/sites", headers=headers)
+        #     site_id = next(s['id'] for s in res_list.json() if s['name'] == site_name)
+        #
+        # print(f"📦 Netlify 배포 중...")
+        # try:
+        #     subprocess.run(
+        #         ["netlify", "deploy", "--prod", "--dir", output_dir, "--site", site_id],
+        #         shell=True, check=True
+        #     )
+        #     print(f"✅ {site_name} 배포 완료!")
+        # except subprocess.CalledProcessError:
+        #     print(f"❌ {site_name} 배포 실패. (Netlify 사이트 이름이 정확한지 확인하세요.)")
+        #
 
 if __name__ == "__main__":
     deploy_all()

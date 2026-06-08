@@ -12,9 +12,12 @@
     <meta property="og:url" content="{{ .Permalink }}">
     <meta property="og:site_name" content="홈케어 지역 서비스">
     <!-- 아래 image 경로에 실제 이미지 파일 주소를 넣으세요 -->
-    <meta name="thumbnail" content="{{ index .Params.images 0 }}" />
-    <meta property="og:image" content="{{ index .Params.images 0 }}" />
-    <meta property="og:locale" content="ko_KR">
+    {{ if .Params.images }}
+    <meta name="thumbnail" content="{{ absURL (index .Params.images 0) }}" />
+    <meta property="og:image" content="{{ absURL (index .Params.images 0) }}" />
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    {{ end }}
     <!-- 이 부분을 추가하세요 -->
     {{ if .Params.description }}
     <meta name="description" content="{{ .Params.description }}">
@@ -38,37 +41,24 @@
 </body>
 
 
-{{- /* 1. 이미지 리스트를 절대 경로(https://...)로 변환 */ -}}
-{{- $image_list := slice -}}
-{{- if .Params.images -}}
-{{- range .Params.images -}}
-{{- $image_list = $image_list | append (absURL .) -}}
-{{- end -}}
-{{- else -}}
-{{- /* 이미지가 없을 경우를 대비한 기본 이미지 */ -}}
-{{- $image_list = $image_list | append (absURL "/images/1.jpg") -}}
-{{- end -}}
-
-{{- /* 2. 전체 데이터를 하나의 구조체로 생성 (문법 에러 방지 핵심) */ -}}
-{{- $schema := dict
-"@context" "https://schema.org"
-"@type" "LocalBusiness"
-"name" (printf "%s %s 전문 업체" .Params.region .Params.category)
-"description" .Params.description
-"url" .Permalink
-"telephone" "0507-1326-6763"
-"address" (dict
-"@type" "PostalAddress"
-"addressLocality" .Params.region
-"addressCountry" "KR"
-)
-"priceRange" "₩40,000 - ₩300,000"
-"image" $image_list
--}}
-
-<!-- 3. 딱 한 번만 출력 (에러 발생 가능성 0%) -->
 <script type="application/ld+json">
-    {{ $schema | jsonify | safeJS }}
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "{{ .Title }}",
+        "image": [
+            {{ range $index, $element := .Params.images }}
+            {{ if $index }},{{ end }}"{{ $element }}"
+            {{ end }}
+        ],
+        "description": "{{ .Params.description }}",
+        "telephone": "{{ .Params.phone }}",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "{{ .Params.region }}",
+            "addressCountry": "KR"
+        }
+    }
 </script>
 
 </html>
