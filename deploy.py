@@ -147,7 +147,6 @@ def prepare_content(num, images_str):
     selected_imgs = random.sample(all_images, 6)
 
     img_param = str(selected_imgs).replace("'", '"')
-    print(img_param)
 
     with open("content/_index.md", "w", encoding="utf-8") as f:
         region = '서울 특별시'
@@ -161,7 +160,7 @@ def prepare_content(num, images_str):
                 f'category: "{category}"\n'
                 f'date: {today_str}\n'
                 f'unique_body: "{unique_body}"\n'
-                f'images: {images_str}\n' # 👈 이미지 리스트 주입
+                f'images: {img_param}\n' # 👈 이미지 리스트 주입
                 f'id: "0"\n'
                 f'---\n')
 
@@ -181,7 +180,7 @@ def prepare_content(num, images_str):
                         f'region: "{region}"\n'
                         f'category: "{category}"\n'
                         f'date: {today_str}\n'
-                        f'images: {images_str}\n' # 👈 이미지 리스트 주입
+                        f'images: {img_param}\n' # 👈 이미지 리스트 주입
                         f'id: "{counter}"\n'
                         f'unique_body: "{unique_body}"\n'
                         f'---\n') # 랜덤 생성된 본문 주입
