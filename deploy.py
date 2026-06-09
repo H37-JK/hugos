@@ -27,7 +27,6 @@ def generate_random_body(region, category):
     # 1. 인사말 및 도입부 (여러 버전)
     intros = [
         f"안녕하세요! {region} 지역에서 {category} 문제를 가장 신속하게 해결해 드리는 베테랑 팀입니다.",
-        f"{region} 주민 여러분, 갑작스러운 {category} 때문에 당황하셨나요? 저희가 즉시 달려갑니다.",
         f"믿을 수 있는 {region} 전담 {category} 수리 업체입니다. 365일 24시간 대기 중입니다."
     ]
 
@@ -35,20 +34,17 @@ def generate_random_body(region, category):
     features = [
         f"저희는 최신형 고화질 배관 내시경을 투입하여 {region} 현장의 원인을 정확히 파악합니다.",
         f"단순히 뚫는 것에 그치지 않고, 강력한 고압 세척 장비로 배관 내부 스케일링까지 완벽하게 진행합니다.",
-        f"특수 석션 장비를 활용해 이물질을 근본적으로 제거하여 재발 가능성을 최소화하고 있습니다."
     ]
 
     # 3. 지역 관련 멘트 (랜드마크 등과 결합하면 베스트)
     local_mentions = [
         f"{region} 인근 아파트 단지는 물론 상가, 빌라 어디든 15분 내외로 도착이 가능합니다.",
-        f"이미 {region} 내 많은 고객님들께서 저희의 꼼꼼한 시공 서비스에 만족하고 계십니다.",
         f"지역 특성을 잘 아는 {region} 전담 기사가 배정되어 거품 없는 투명한 견적을 약속드립니다."
     ]
 
     # 4. 마무리 및 호출
     closings = [
         f"지금 바로 전화주시면 {region} 전문 상담원이 친절하게 안내해 드리겠습니다.",
-        f"어려운 배관 문제, 더 이상 혼자 고민하지 마시고 전문가에게 맡겨주세요.",
         f"합리적인 비용과 확실한 A/S로 {region} 고객님의 만족을 책임지겠습니다."
     ]
 
@@ -56,8 +52,7 @@ def generate_random_body(region, category):
     body = [
         random.choice(intros),
         random.choice(features),
-        random.choice(local_mentions),
-        random.choice(closings)
+        random.choice(local_mentions)
     ]
 
     # [중요] 섹션의 순서까지 섞어주면 중복 판정 확률이 더 낮아집니다.
@@ -161,7 +156,7 @@ def prepare_content(num, images_str):
         summary = f"{region}{category} 전문 업체입니다. 24시 신속 출동 및 정직한 비용으로 해결해 드립니다."
         f.write(f''f'---\n'
                 f'title: "{region} {category} 업체 가장 잘하는 곳"\n'
-                f'description: "{unique_body}"\n' # 👈 이 줄을 추가하세요!
+                f'description: "{summary}"\n' # 👈 이 줄을 추가하세요!
                 f'region: "{region}"\n'
                 f'category: "{category}"\n'
                 f'date: {today_str}\n'
@@ -182,7 +177,7 @@ def prepare_content(num, images_str):
             with open(f"content/{counter}.md", "w", encoding="utf-8") as f:
                 f.write(f''f'---\n'
                         f'title: "{unique_title}"\n'
-                        f'description: "{unique_body}"\n' # 👈 이 줄을 추가하세요!
+                        f'description: "{summary}"\n' # 👈 이 줄을 추가하세요!
                         f'region: "{region}"\n'
                         f'category: "{category}"\n'
                         f'date: {today_str}\n'
